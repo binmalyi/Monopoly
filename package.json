@@ -1,0 +1,11 @@
+{
+  "name": "monopoly",
+  "module": "src/main.mts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
