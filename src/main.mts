@@ -26,20 +26,20 @@ type Board = Deed|Community;
 const Properties: Array<InstanceType<typeof Property>> = [...Object.keys(Estates) as Array<Estate>,...Airports,...Utilities].map(key => new Property(key));
 
 class Property {
-    private _Owner: Player | null = null;
+    public owner: Player | null = null;
     public mortgaged: boolean = false;
     public name: Deed;
     public get Type(){ return Airports.some(prop => prop === this.name) ? "Airport" : (Utilities.some(utility => utility === this.name) ? "Utility" : "Estate") };
     public get Price(){ return this.Type === "Airport" ? 200 : (this.Type === "Utility" ? 150 : Estates[this.name as Estate]) };
     public mortgage(){
-        if (!this._Owner) throw Error(`${this.name} is not owned`);
+        if (!this.owner) throw Error(`${this.name} is not owned`);
         else if (this.mortgaged) throw new Error(`${this.name} is already mortgaged`);
-        else (this["_Owner"].cash += this.Price * .5, this.mortgaged = !this.mortgaged);
+        else (this.owner.cash += this.Price * .5, this.mortgaged = !this.mortgaged);
     };
     public sell(){
-        if (!this._Owner) throw Error(`${this.name} is not owned`);
-        else if (!this.mortgaged) this["_Owner"].cash += this.Price;
-        this["_Owner"] = null;
+        if (!this.owner) throw Error(`${this.name} is not owned`);
+        else if (!this.mortgaged) this.owner.cash += this.Price;
+        this.owner = null;
     };
 
     constructor(name: Deed){
@@ -51,7 +51,7 @@ class Property {
 class Player {
     public name: string;
     public cash!: number;
-    public get properties(){ return Properties.filter(property => Object.is(this, property["_Owner"])) };
+    public get properties(){ return Properties.filter(property => Object.is(this, property.owner)) };
     public roll(min=1, max=6, random=Rnd){ return ~~(1+(max-min)*random()) + ~~(1+(max-min)*random()) };
 
     constructor(name: string){
